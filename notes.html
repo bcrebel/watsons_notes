@@ -29,16 +29,51 @@
 		</div>
 		<div id="mysteries">
 		</div>
+		<div id="round">
+		</div>
+		<div id="tries">
+		</div>
  		<script>
 		//Tell the player that Dr Watson's notes are out of order. Help him place them with the relevant mystery.
  		//Show x number of clues and a corresponding mystery
 		//Create mystery object constructor
+
 		function Mystery (title, clues, irrClues) {
 			this.title = title;
 			this.clues = clues;
 			this.irrClues = irrClues;
+			this.printClues = function () {
+ 				for ( var k = 0;  k < this['clues'].length; k++) {
+					// Add p elements for each clue
+					document.getElementById('notes').innerHTML += "<p onclick='wrongAnswer()' class='wrong' >" + this.clues[k] + "</p>";
+					// Add p elements for each clue
+	
+				}
+
+			},
+			this.printIrrClues = function () {
+				for ( var k = 0;  k < 1; k++) {
+					// Add p elements for each clue
+					document.getElementById('notes').innerHTML += "<p onclick='rightAnswer()' class='right'>" + this['irrClues'][Math.floor(Math.random() * this['irrClues'].length)] + "</p>";
+					// Add p elements for each clue
+	
+				}
+			}
 
 		}
+
+		var attempts = 0;
+		function wrongAnswer() {
+			alert("Sorry, that clue belongs to this mystery");
+			attempts+= 1;
+			document.getElementById("tries").innerHTML = "<p> Attempts: " + attempts + "</p>";
+ 		}
+
+		function rightAnswer() {
+			alert("Yay that's correct!");
+
+		}
+
 
 		var baskervilles = new Mystery ("The Hound of the Baskervilles", [ "an old missing boot", "Mr. Stapleton is a blood relative of Sir Henry", "Mr. Stapleton proposes to Laura Lyons", "a portrait of Stapleton looks like Hugo Baskerville", "the moor has been painted with phosphorous"], [] );
 
@@ -53,7 +88,9 @@
 		function startGame (mysterySet) {
 		//Show x number of clues and a corresponding mystery
 			for (var i = 0; i < mysterySet.length; i++) {
-
+				//Keep track of round
+				var round = 0,
+				round = i + 1;
 				//Add a bad clue
 				while (true) {
  
@@ -71,24 +108,43 @@
 
 				var titleBlock = "";
 				titleBlock = ("<p>" + mysterySet[i]['title'] + "</p>");
-				var clueBlock = [];
+				/*var clueBlock = [];
 				clueBlock = mysterySet[i]['clues'];
 				for ( var k = 0;  k < clueBlock.length; k++) {
 					// Add p elements for each clue
-					document.getElementById('notes').innerHTML += "<p>" + clueBlock[k] + "</p>";
+					document.getElementById('notes').innerHTML += "<p onclick='wrongAnswer();' class='wrong' >" + clueBlock[k] + "</p>";
 					// Add p elements for each clue
-					
-				}
-				document.getElementById('notes').innerHTML += "<p>" + mysterySet[i]['irrClues'][Math.floor(Math.random() * mysterySet[i]['irrClues'].length)] + "</p>";
-				document.getElementById("mysteries").innerHTML = titleBlock;
-				break;
+	
+				}*/
+				//document.getElementById('notes').innerHTML += "<p class='right'>" + mysterySet[i]['irrClues'][Math.floor(Math.random() * mysterySet[i]['irrClues'].length)] + "</p>";
 
- 			//x of the clues is irrelevant
-				//delete irrelevant clue on click
+				document.getElementById("mysteries").innerHTML = titleBlock;
+				document.getElementById("round").innerHTML = "<p> Round: " + round + "</p>";//add printclue function to construtor!
+				document.getElementById("tries").innerHTML = "<p> Attempts: " + attempts + "</p>";
+				mysteries[i].printClues();
+				mysteries[i].printIrrClues();
+				break;
+ 
+				//When player clicks the wrong clue, alert that its wrong and increase attempts
+				//Function initiates after wrong clue click
+
+				//when player clicks the right clue, alert that its right and restart loop 
+
+
 				//if the choice is wrong, alert user 
 					//count number of attempts
 				//if the choice is correct, alert user and proceed to next book
-			}		//count correct selections in score
+			
+
+
+
+
+
+			}
+					//count correct selections in score
+		
+
+		
 		}
 
 		startGame(mysteries);
