@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Dr. Watson's Notes</title>
+		<style>
+			h1 {
+				text-align: center;
+			}
+			#notes {
+				float: left;
+				width: 500px;
+				height: 500px;
+				border: solid 1px black;
+			}
+
+			#mysteries {
+				float: right;
+				display: block;
+				height: 500px;
+				width: 500px;
+				border: solid 1px green;
+
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Dr. Watson's notes are out of order. He needs your help to reorder them.</h1>
+		<div id="notes">
+		</div>
+		<div id="mysteries">
+		</div>
+ 		<script>
+		//Tell the player that Dr Watson's notes are out of order. Help him place them with the relevant mystery.
+ 		//Show x number of clues and a corresponding mystery
+		//Create mystery object constructor
+		function Mystery (title, clues, irrClues) {
+			this.title = title;
+			this.clues = clues;
+			this.irrClues = irrClues;
+
+		}
+
+		var baskervilles = new Mystery ("The Hound of the Baskervilles", [ "an old missing boot", "Mr. Stapleton is a blood relative of Sir Henry", "Mr. Stapleton proposes to Laura Lyons", "a portrait of Stapleton looks like Hugo Baskerville", "the moor has been painted with phosphorous"], [] );
+
+		var bohemia = new Mystery ("A Scandal in Bohemia", ["cabinet-sized photograph", "'Good-night, Mister Sherlock Holmes'", "a recess behind a sliding panel", "newlyweds separate at church door", "stiff paper from bohemia"], []);
+
+		var redheads = new Mystery ("The Adventure of the Red-Headed League", ["dirty trouser knees", "fiery red hair", "if you leave, you forfeit your whole position forever", "£4 a week to copy the Encyclopaedia Britannica" ], []);
+
+		var bicycle = new Mystery ("The Adventure of the Solitary Cyclist", ["cyclist with a black beard", "£100 for music teacher, but no horse and trap", "bride with a gagged mouth"],[]);  
+		var mysteries = [baskervilles, bohemia, redheads, bicycle];
+		
+
+		function startGame (mysterySet) {
+		//Show x number of clues and a corresponding mystery
+			for (var i = 0; i < mysterySet.length; i++) {
+
+				//Add a bad clue
+				while (true) {
+ 
+					var ranIndex = Math.floor(Math.random() * mysterySet.length);
+					if (mysterySet[i] == mysterySet[ranIndex]) {
+						true;
+ 					} else {
+						mysterySet[i]['irrClues'] = mysterySet[ranIndex]['clues'];
+						break;
+ 					}
+ 				}
+
+				
+				//Write title of mystery to the page
+
+				var titleBlock = "";
+				titleBlock = ("<p>" + mysterySet[i]['title'] + "</p>");
+				var clueBlock = [];
+				clueBlock = mysterySet[i]['clues'];
+				for ( var k = 0;  k < clueBlock.length; k++) {
+					// Add p elements for each clue
+					document.getElementById('notes').innerHTML += "<p>" + clueBlock[k] + "</p>";
+					// Add p elements for each clue
+					
+				}
+				document.getElementById('notes').innerHTML += "<p>" + mysterySet[i]['irrClues'][Math.floor(Math.random() * mysterySet[i]['irrClues'].length)] + "</p>";
+				document.getElementById("mysteries").innerHTML = titleBlock;
+				break;
+
+ 			//x of the clues is irrelevant
+				//delete irrelevant clue on click
+				//if the choice is wrong, alert user 
+					//count number of attempts
+				//if the choice is correct, alert user and proceed to next book
+			}		//count correct selections in score
+		}
+
+		startGame(mysteries);
+		</script>
+	</body>
+</html>
