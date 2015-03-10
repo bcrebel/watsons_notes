@@ -45,33 +45,40 @@
 			this.printClues = function () {
  				for ( var k = 0;  k < this['clues'].length; k++) {
 					// Add p elements for each clue
-					document.getElementById('notes').innerHTML += "<p onclick='wrongAnswer()' class='wrong' >" + this.clues[k] + "</p>";
-					// Add p elements for each clue
-	
-				}
+					document.getElementById('notes').innerHTML += "<button class='wrong' onClick='wrongAnswer()' >" + this.clues[k] + "</button>";
 
-			},
+					}
+ 			},
 			this.printIrrClues = function () {
 				for ( var k = 0;  k < 1; k++) {
 					// Add p elements for each clue
-					document.getElementById('notes').innerHTML += "<p onclick='rightAnswer()' class='right'>" + this['irrClues'][Math.floor(Math.random() * this['irrClues'].length)] + "</p>";
-					// Add p elements for each clue
-	
+					document.getElementById('notes').innerHTML += "<button onClick='rightAnswer()' class='right'>" + this['irrClues'][Math.floor(Math.random() * this['irrClues'].length)] + "</button>";
+ 	
 				}
 			}
 
 		}
 
-		var attempts = 0;
-		function wrongAnswer() {
+  		function wrongAnswer() {
 			alert("Sorry, that clue belongs to this mystery");
 			attempts+= 1;
 			document.getElementById("tries").innerHTML = "<p> Attempts: " + attempts + "</p>";
  		}
 
 		function rightAnswer() {
+			var myNode = document.getElementById("notes");
+			while (myNode.firstChild) {
+    				myNode.removeChild(myNode.firstChild);
+			}
+			if (i === mysteries.length - 1 ) {
+				confirm("Congrats you won. \n Only " + attempts + " attempts. Play again?");
+				i = 0;
+				startGame(mysteries);				
+			} else { 
 			alert("Yay that's correct!");
-
+			i++;
+			return startGame(mysteries);
+ 			}
 		}
 
 
@@ -84,21 +91,22 @@
 		var bicycle = new Mystery ("The Adventure of the Solitary Cyclist", ["cyclist with a black beard", "£100 for music teacher, but no horse and trap", "bride with a gagged mouth"],[]);  
 		var mysteries = [baskervilles, bohemia, redheads, bicycle];
 		
-
-		function startGame (mysterySet) {
+		var i = 0;
+		var attempts = 0;
+		function startGame (mysteries) {
 		//Show x number of clues and a corresponding mystery
-			for (var i = 0; i < mysterySet.length; i++) {
+ 			for ( ; i < mysteries.length; i++) {
 				//Keep track of round
 				var round = 0,
 				round = i + 1;
 				//Add a bad clue
 				while (true) {
  
-					var ranIndex = Math.floor(Math.random() * mysterySet.length);
-					if (mysterySet[i] == mysterySet[ranIndex]) {
+					var ranIndex = Math.floor(Math.random() * mysteries.length);
+					if (mysteries[i] == mysteries[ranIndex]) {
 						true;
  					} else {
-						mysterySet[i]['irrClues'] = mysterySet[ranIndex]['clues'];
+						mysteries[i]['irrClues'] = mysteries[ranIndex]['clues'];
 						break;
  					}
  				}
@@ -107,24 +115,28 @@
 				//Write title of mystery to the page
 
 				var titleBlock = "";
-				titleBlock = ("<p>" + mysterySet[i]['title'] + "</p>");
+				titleBlock = ("<p>" + mysteries[i]['title'] + "</p>");
 				/*var clueBlock = [];
-				clueBlock = mysterySet[i]['clues'];
+				clueBlock = mysteries[i]['clues'];
 				for ( var k = 0;  k < clueBlock.length; k++) {
 					// Add p elements for each clue
 					document.getElementById('notes').innerHTML += "<p onclick='wrongAnswer();' class='wrong' >" + clueBlock[k] + "</p>";
 					// Add p elements for each clue
 	
 				}*/
-				//document.getElementById('notes').innerHTML += "<p class='right'>" + mysterySet[i]['irrClues'][Math.floor(Math.random() * mysterySet[i]['irrClues'].length)] + "</p>";
+				//document.getElementById('notes').innerHTML += "<p class='right'>" + mysteries[i]['irrClues'][Math.floor(Math.random() * mysteries[i]['irrClues'].length)] + "</p>";
 
 				document.getElementById("mysteries").innerHTML = titleBlock;
 				document.getElementById("round").innerHTML = "<p> Round: " + round + "</p>";//add printclue function to construtor!
 				document.getElementById("tries").innerHTML = "<p> Attempts: " + attempts + "</p>";
+
 				mysteries[i].printClues();
 				mysteries[i].printIrrClues();
 				break;
- 
+
+
+    
+  
 				//When player clicks the wrong clue, alert that its wrong and increase attempts
 				//Function initiates after wrong clue click
 
