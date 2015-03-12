@@ -2,161 +2,230 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Dr. Watson's Notes</title>
+		<link href='http://fonts.googleapis.com/css?family=Volkhov' rel='stylesheet' type='text/css'>
+		
 		<style>
-			h1 {
+			body {
+				font-family: 'Volkhov', serif;
+				background-color: SaddleBrown;
+			}
+
+			h1, h4 {
 				text-align: center;
+				background-color: BurlyWood;
+				border: double 5px black;
+				width: 90%;
+				margin-left: 5%;
+				font-size: 1.3rem;
+				padding: 5px 0px 5px 0px;
 			}
+
+			h4 {
+ 				font-size: 0.75rem;
+			}
+
 			#notes {
-				float: left;
-				width: 500px;
-				height: 500px;
+				-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    			-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    			box-sizing: border-box;         /* Opera/IE 8+ */
+				float: right;
+				width: 40%;
+				margin: 0% 5% 0% 5%;
+ 				height: 500px;
 				border: solid 1px black;
-			}
+				background-color: DarkKhaki;
+				padding: 10px;
+				border: 5px solid black;
+ 			}
 
 			#mysteries {
-				float: right;
+				-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    			-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    			box-sizing: border-box;         /* Opera/IE 8+ */
+				float: left;
 				display: block;
 				height: 500px;
-				width: 500px;
-				border: solid 1px green;
-
+				width: 40%;
+				margin: 0px 0px 10px 5%;
+				border: solid 5px DarkOliveGreen;
+				background-color: #806A59;
 			}
+
+			#mysteries p {
+				text-align: center;
+				font-size: 2.5rem;
+				margin-top: 100px;
+				padding: 0px 25px 10px 25px;
+				color: GoldenRod;
+				text-transform: uppercase;
+			}
+
+			ul {
+				clear: both;
+				margin: 5px 0px 0px 3%;
+			}
+
+			li {
+				float: left;
+				list-style: none;
+				margin-right: 10px;
+				font-size: 1.5rem;
+			}
+
+			button: hover {
+				background-color: white;
+			}
+
+			button {
+				padding: 15px;
+				margin: 25px 0px 0px 20px;
+ 				background-color: Beige;
+				border: solid 2px DimGray;
+				font-weight: bold;
+				font-family: 'Volkhov', serif;
+			}
+
+
+
 		</style>
+
 	</head>
 	<body>
 		<h1>Dr. Watson's notes are out of order. He needs your help to reorder them.</h1>
-		<div id="notes">
-		</div>
+		
+		<h4>Kindly assist Dr. Watson in identifying which clue does <em>not</em> relate to the mystery. Use your knowledge of Sherlock Holmes' adventures as your aid. <br>Try to use as few attempts as possible.
+		Good Luck!</h4>
 		<div id="mysteries">
 		</div>
-		<div id="round">
+		<div id="notes">
 		</div>
-		<div id="tries">
-		</div>
- 		<script>
-		//Tell the player that Dr Watson's notes are out of order. Help him place them with the relevant mystery.
- 		//Show x number of clues and a corresponding mystery
-		//Create mystery object constructor
-
-		function Mystery (title, clues, irrClues) {
+		<ul id="stats">
+		</ul>
+		<script>
+ 		// Define an object constructor for the Mystery object, including relevant and irrelevant clues
+		function Mystery (title, relClues, irrClues) {
 			this.title = title;
-			this.clues = clues;
+			this.relClues = relClues;
 			this.irrClues = irrClues;
-			this.printClues = function () {
- 				for ( var k = 0;  k < this['clues'].length; k++) {
-					// Add p elements for each clue
-					document.getElementById('notes').innerHTML += "<button class='wrong' onClick='wrongAnswer()' >" + this.clues[k] + "</button>";
-
-					}
- 			},
-			this.printIrrClues = function () {
-				for ( var k = 0;  k < 1; k++) {
-					// Add p elements for each clue
-					document.getElementById('notes').innerHTML += "<button onClick='rightAnswer()' class='right'>" + this['irrClues'][Math.floor(Math.random() * this['irrClues'].length)] + "</button>";
- 	
+			// Assign all clues to an empty array
+			this.allClues = [];
+			// Create a method to list all clues, bot relevant and irrelevant to the allClues property array
+			this.listClues = function() {
+				this.allClues = [];
+ 				// Loop through all relClues
+				for (var c = 0; c < this['relClues'].length; c++) {
+					// Push each clue with html elements to allClues array
+					this.allClues.push("<button class='wrong' onClick='wrongAnswer()'>" + this['relClues'][c]) + "</button>";
 				}
+
+				// Select d number of irrClues to push to allClues array 
+				for (var d = 0; d < 1; d++) {
+					this.allClues.push("<button onClick='rightAnswer()' class='right'>" + this['irrClues'][Math.floor(Math.random() * this['irrClues'].length)] + "</button>");
+				}
+				return this.allClues; 
+			}
+			// Create a method to randomize the order of indices in the allClues array
+			this.randomClues = function() {
+				for(var x, y, z = this.allClues.length; z; x = Math.floor(Math.random() * z),
+				y = this.allClues[--z], this.allClues[z] = this.allClues[x], this.allClues[x] = y);
+					return this.allClues;
+			}
+			// Create a method to update html elements with randomized allClues indices
+			this.printRandomClues = function() {
+				for (var r = 0; r < this.allClues.length; r++) {
+					document.getElementById("notes").innerHTML += this.allClues[r];
+				}
+
 			}
 
 		}
 
+		// Function called when user clicks an incorrect clue
   		function wrongAnswer() {
-			alert("Sorry, that clue belongs to this mystery");
+			alert("Sorry, that clue relates to this mystery");
+			// Increase attempts by 1
 			attempts+= 1;
-			document.getElementById("tries").innerHTML = "<p> Attempts: " + attempts + "</p>";
+			// Update attempts list item
+			document.getElementById("attempts").innerHTML = "Attempts: " + attempts  ;
  		}
 
+ 		// Function called when user clicks a correct clue
 		function rightAnswer() {
+			// Reset html elements for next round
 			var myNode = document.getElementById("notes");
 			while (myNode.firstChild) {
     				myNode.removeChild(myNode.firstChild);
 			}
-			if (i === mysteries.length - 1 ) {
-				confirm("Congrats you won. \n Only " + attempts + " attempts. Play again?");
+			// Determine is game is in final round
+			if (i === mysteries.length - 1) {
+				alert("I congratulate you on your victory! \nOnly " + attempts + " attempts needed. Play again?");
 				i = 0;
+				attempts = 0;
+				// Reinitialize game
 				startGame(mysteries);				
+			// If game is not in final round, increment i and reinitialize game
 			} else { 
-			alert("Yay that's correct!");
+			alert("Thank you dear player! You just found a misplaced clue!");
 			i++;
 			return startGame(mysteries);
  			}
 		}
 
-
+		// List Mystery objects and store each in a variable
 		var baskervilles = new Mystery ("The Hound of the Baskervilles", [ "an old missing boot", "Mr. Stapleton is a blood relative of Sir Henry", "Mr. Stapleton proposes to Laura Lyons", "a portrait of Stapleton looks like Hugo Baskerville", "the moor has been painted with phosphorous"], [] );
 
-		var bohemia = new Mystery ("A Scandal in Bohemia", ["cabinet-sized photograph", "'Good-night, Mister Sherlock Holmes'", "a recess behind a sliding panel", "newlyweds separate at church door", "stiff paper from bohemia"], []);
+		var bohemia = new Mystery ("A Scandal in Bohemia", ["a cabinet-sized photograph", '"Good-night, Mister Sherlock Holmes"', "a recess behind a sliding panel", "newlyweds separate at church door", "stiff paper from bohemia"], []);
 
-		var redheads = new Mystery ("The Adventure of the Red-Headed League", ["dirty trouser knees", "fiery red hair", "if you leave, you forfeit your whole position forever", "£4 a week to copy the Encyclopaedia Britannica" ], []);
+		var redheads = new Mystery ("The Adventure of the Red-Headed League", ["dirty trouser knees", "fiery red hair", '"if you leave, you forfeit your whole position forever"', "£4 a week to copy the Encyclopaedia Britannica" ], []);
 
-		var bicycle = new Mystery ("The Adventure of the Solitary Cyclist", ["cyclist with a black beard", "£100 for music teacher, but no horse and trap", "bride with a gagged mouth"],[]);  
-		var mysteries = [baskervilles, bohemia, redheads, bicycle];
+		var bicycle = new Mystery ("The Adventure of the Solitary Cyclist", ["cyclist with a black beard", "£100 for music teacher, but no horse and trap", "bride with a gagged mouth"],[]);
+
+		var peter = new Mystery ("The Adventure of Black Peter", ["the rum was open while the brandy and whiskey were untouched", "the notebook initials C.P.R. stand for 'Canadian Pacific Railway'", "the notebook initials J.H.N. are probably a stockbroker's", "a sealskin tobacco pouch", "Peter Carey seldom smoked"], []);  
 		
-		var i = 0;
-		var attempts = 0;
+		// Store all Mystery objects in one variable for gameplay
+		var mysteries = [baskervilles, bohemia, redheads, bicycle, peter];
+		
+		// Initial variable settings for the game
+		var i = 0, attempts = 0;
+
+
+		// Create function to start game
 		function startGame (mysteries) {
-		//Show x number of clues and a corresponding mystery
- 			for ( ; i < mysteries.length; i++) {
-				//Keep track of round
+
+		// Show x number of relClues and a corresponding mystery
+ 			for (; i < mysteries.length; i++) {
+				// Keep track of round
 				var round = 0,
 				round = i + 1;
-				//Add a bad clue
+				// Add a random, irrelevant clue
 				while (true) {
- 
-					var ranIndex = Math.floor(Math.random() * mysteries.length);
+ 					var ranIndex = Math.floor(Math.random() * mysteries.length);
+					// If random array index is identical to current array i, restart loop
 					if (mysteries[i] == mysteries[ranIndex]) {
 						true;
+ 					// If random array index is not identical, assign random index to irrClues array
  					} else {
-						mysteries[i]['irrClues'] = mysteries[ranIndex]['clues'];
+						mysteries[i]['irrClues'] = mysteries[ranIndex]['relClues'];
 						break;
  					}
  				}
 
 				
-				//Write title of mystery to the page
-
+				// Write title of current mystery to the page
 				var titleBlock = "";
 				titleBlock = ("<p>" + mysteries[i]['title'] + "</p>");
-				/*var clueBlock = [];
-				clueBlock = mysteries[i]['clues'];
-				for ( var k = 0;  k < clueBlock.length; k++) {
-					// Add p elements for each clue
-					document.getElementById('notes').innerHTML += "<p onclick='wrongAnswer();' class='wrong' >" + clueBlock[k] + "</p>";
-					// Add p elements for each clue
-	
-				}*/
-				//document.getElementById('notes').innerHTML += "<p class='right'>" + mysteries[i]['irrClues'][Math.floor(Math.random() * mysteries[i]['irrClues'].length)] + "</p>";
 
 				document.getElementById("mysteries").innerHTML = titleBlock;
-				document.getElementById("round").innerHTML = "<p> Round: " + round + "</p>";//add printclue function to construtor!
-				document.getElementById("tries").innerHTML = "<p> Attempts: " + attempts + "</p>";
+				// Write current round number and attempts count to the page
+				document.getElementById("stats").innerHTML = "<li> Round: " + round + "</li>";
+				document.getElementById("stats").innerHTML += "<li id='attempts'> Attempts: " + attempts + "</li>";
 
-				mysteries[i].printClues();
-				mysteries[i].printIrrClues();
+				//Call listClues, randomClues, and printRandomClues functions
+				mysteries[i].listClues();
+				mysteries[i].randomClues();
+				mysteries[i].printRandomClues();
 				break;
-
-
-    
-  
-				//When player clicks the wrong clue, alert that its wrong and increase attempts
-				//Function initiates after wrong clue click
-
-				//when player clicks the right clue, alert that its right and restart loop 
-
-
-				//if the choice is wrong, alert user 
-					//count number of attempts
-				//if the choice is correct, alert user and proceed to next book
-			
-
-
-
-
-
 			}
-					//count correct selections in score
-		
-
-		
 		}
 
 		startGame(mysteries);
